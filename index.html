@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zynx App Hub - Premium Android Store</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- SOLID LIGHT THEME UI -->
+    <style>
+        :root {
+            --bg-color: #f6f9fc;       
+            --card-bg: #ffffff;       
+            --text-main: #0f172a;     
+            --text-muted: #64748b;    
+            --primary: #1e40af;       
+            --accent-green: #10b981;  
+            --accent-orange: #f97316; 
+            --border-color: #e2e8f0;  
+            --nav-active: #1e40af;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; }
+
+        .phone-wrapper {
+            width: 100%; max-width: 480px; background: #ffffff; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.06); padding-bottom: 76px;
+        }
+
+        header { padding: 16px 20px 10px 20px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; }
+        .brand-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .brand-logo-icon { font-size: 1.8rem; color: var(--accent-orange); }
+        .brand-details h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+        .brand-details p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        
+        .header-profile {
+            width: 38px; height: 38px; border-radius: 50%; background: #e2e8f0;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer;
+            border: 2px solid #eff6ff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-size: cover; background-position: center;
+        }
+
+        main { flex: 1; overflow-y: auto; padding: 20px; }
+
+        /* SINGLE APP CARD DISPLAY */
+        .single-app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .app-hero-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: var(--card-bg);
+            padding: 5px 0;
+        }
+
+        .main-app-icon {
+            width: 84px;
+            height: 84px;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .main-app-title h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .main-app-title .category-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: #eff6ff;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-top: 5px;
+        }
+
+        /* METRICS STATUS BAR */
+        .metrics-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 5px;
+        }
+
+        .metric-box { text-align: center; }
+        .metric-val { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
+        .metric-lbl { font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 2px; }
+
+        .app-description-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+        }
+
+        .app-description-box h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .app-description-box p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .big-download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--accent-green);
+            color: white;
+            padding: 15px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(16,185,129,0.25);
+            transition: transform 0.2s;
+            margin-top: 5px;
+        }
+
+        .big-download-btn:active { transform: scale(0.98); }
+
+        /* PROFILE VIEW AND EXTENDED DESCRIPTIONS */
+        .profile-view { display: none; }
+        .profile-hero { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 20px; padding: 25px 20px; text-align: center; margin-bottom: 20px; }
+        .profile-avatar-large { width: 80px; height: 80px; background: #cbd5e1; color: white; font-size: 2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 12px auto; background-size: cover; background-position: center; }
+        .google-btn { display: inline-flex; align-items: center; gap: 10px; background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .logout-btn { background: #fff5f5; color: var(--danger); border: 1px solid #fee2e2; padding: 10px 18px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        
+        .info-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .info-card-title { font-size: 0.88rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .info-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* BOTTOM DOCK NAVIGATION */
+        nav.bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 72px; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 101; }
+        .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 0.65rem; font-weight: 700; cursor: pointer; text-transform: uppercase; flex: 1; }
+        .nav-item i { font-size: 1.25rem; }
+        .nav-item.active { color: var(--nav-active); }
+        .loading { text-align: center; color: var(--text-muted); padding: 35px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-wrapper">
+        
+        <!-- HEADER -->
+        <header>
+            <div class="brand-container" onclick="navTabSwitch('all', document.getElementById('btn-home'))">
+                <div class="brand-logo-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="brand-details">
+                    <h1>Zynx App Hub</h1>
+                    <p>India's Premium App Store</p>
+                </div>
+            </div>
+            <div class="header-profile" id="headerProfilePic" onclick="navTabSwitch('profile', document.getElementById('btn-profile'))">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </header>
+
+        <!-- MAIN VIEWPORT -->
+        <main id="mainContainer">
+            
+            <!-- MARKET CONTENT PAGE (SINGLE APP FOCUS MODE) -->
+            <div id="storeViewContent">
+                <div id="singleAppLayout" class="single-app-container">
+                    <div class="loading">Loading apk node...</div>
+                </div>
+            </div>
+
+            <!-- PROFILE VIEW CONTENT PAGE -->
+            <div id="profileViewContent" class="profile-view">
+                <div class="profile-hero">
+                    <div class="profile-avatar-large" id="userLargeAvatar"><i class="fa-solid fa-user"></i></div>
+                    <h3 style="font-size:1.2rem; font-weight:800;" id="userDisplayName">Guest User</h3>
+                    <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:15px;" id="userDisplayEmail">Sign in to securely register account features.</p>
+                    <div id="authActionArea"><button class="google-btn" onclick="loginWithGoogle()"><i class="fa-brands fa-google" style="color:#ea4335;"></i> Sign In with Google</button></div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-shield-halved"></i> 100% Virus-Free & Safe Framework</div>
+                    <p>Zynx App Hub ka poora data-flow static clean layers par optimized kiya gaya hai. Platform par upload hone wali har ek package file direct GitHub open-source repositories ke zariye bina kisi malware payload ya hidden script ke sidhe deliver hoti hai, jisse aapka device safe rehta hai.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-server"></i> Zero-Cost Static Architecture</div>
+                    <p>Kyunki hum backend storage servers par fizool kharch nahi karte, isliye hamari bandwidth speed ekdam lightning fast milti hai. GitHub Pages hosting infrastructure ka fayda uthate hue, users bina kisi download-limit ya slow network speed barrier ke direct high-speed links ka access pate hain.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fa-solid fa-code"></i> Developer sandbox terms</div>
+                    <p>Zynx App Hub ek digital terminal hai jo premium calculation tools, administrative utility applications aur lightweight android packages ko directly host aur manage karne ke kaam aata hai. Version management dashboard backup systems ke sath synced hai.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" id="btn-home" onclick="navTabSwitch('all', this)"><i class="fa-solid fa-house"></i>Home</button>
+            <button class="nav-item" id="btn-games" onclick="navTabSwitch('games', this)"><i class="fa-solid fa-gamepad"></i>Games</button>
+            <button class="nav-item" id="btn-apps" onclick="navTabSwitch('apps', this)"><i class="fa-solid fa-layer-group"></i>Apps</button>
+            <button class="nav-item" id="btn-tools" onclick="navTabSwitch('tools', this)"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</button>
+            <button class="nav-item" id="btn-profile" onclick="navTabSwitch('profile', this)"><i class="fa-solid fa-circle-user"></i>Profile</button>
+        </nav>
+
+    </div>
+
+    <!-- Firebase SDK Links for Google Login -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase Config (For Authentication Usage Only)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC0NMbLU8pz9gyqIl2HAwLH55CpHzOT0lE",
+            authDomain: "followflow-a9ac4.firebaseapp.com",
+            projectId: "followflow-a9ac4",
+            storageBucket: "followflow-a9ac4.firebasestorage.app",
+            messagingSenderId: "903228838195",
+            appId: "1:903228838195:web:51ea2551472bb1998e2e46"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // MASTER DATA LIST
+        const masterStoreData = [
+            {
+                appName: "Calculator",
+                category: "tools",
+                iconUrl: "icons/calc.png",         
+                apkUrl: "apks/calculator.apk",      // 👈 Yahan file path exact calculator.apk set ho gaya hai
+                appSize: "4.8 MB",
+                description: "Inch-soot framework calculator designed for active infrastructure layouts, structural area metrics, and dynamic fractional hardware estimations safely."
+            }
+        ];
+
+        let filterCategory = 'all';
+
+        // Firebase Google Login Tracker
+        auth.onAuthStateChanged((user) => {
+            const headerProfilePic = document.getElementById('headerProfilePic');
+            const userLargeAvatar = document.getElementById('userLargeAvatar');
+            const userDisplayName = document.getElementById('userDisplayName');
+            const userDisplayEmail = document.getElementById('userDisplayEmail');
+            const authActionArea = document.getElementById('authActionArea');
+
+            if (user) {
+                headerProfilePic.style.backgroundImage = `url('${user.photoURL}')`; headerProfilePic.innerHTML = "";
+                userLargeAvatar.style.backgroundImage = `url('${user.photoURL}')`; userLargeAvatar.innerHTML = "";
+                userDisplayName.innerText = user.displayName;
+                userDisplayEmail.innerText = user.email;
+                authActionArea.innerHTML = `<button class="logout-btn" onclick="logoutFromStore()"><i class="fa-solid fa-power-off"></i> Disconnect</button>`;
+            } else {
+                headerProfilePic.style.backgroundImage = "none"; headerProfilePic.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                userLargeAvatar.style.backgroundImage = "none"; userLargeAvatar.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                userDisplayName.innerText = "Guest User";
+                userDisplayEmail.innerText = "Login to sync your profile features safely.";
+                authActionArea.innerHTML = `<button class="google-btn" onclick="loginWithGoogle()"><i class="fa-brands fa-google" style="color:#ea4335;"></i> Sign In with Google</button>`;
+            }
+        });
+
+        function loginWithGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        function logoutFromStore() { auth.signOut(); }
+
+        window.onload = () => { applyFilters(); };
+
+        function renderSingleApp(app) {
+            const container = document.getElementById('singleAppLayout');
+            
+            if(!app) {
+                container.innerHTML = `<div class="loading"><i class="fa-solid fa-box-open" style="font-size:2rem; color:var(--text-muted); display:block; margin-bottom:10px;"></i>No app listed in this category right now.</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="app-hero-header">
+                    <img src="${app.iconUrl}" class="main-app-icon" onerror="this.src='https://placehold.co/120'">
+                    <div class="main-app-title">
+                        <h2>${app.appName}</h2>
+                        <span class="category-tag">${app.category}</span>
+                    </div>
+                </div>
+
+                <div class="metrics-bar">
+                    <div class="metric-box"><div class="metric-val"><i class="fa-solid fa-star" style="color:#eab308;"></i> 4.9</div><div class="metric-lbl">Rating</div></div>
+                    <div class="metric-box"><div class="metric-val">${app.appSize}</div><div class="metric-lbl">Size</div></div>
+                    <div class="metric-box"><div class="metric-val" style="color:#10b981;"><i class="fa-solid fa-circle-check"></i></div><div class="metric-lbl">Verified</div></div>
+                </div>
+
+                <div class="app-description-box">
+                    <h3>About this software</h3>
+                    <p>${app.description}</p>
+                </div>
+
+                <a href="${app.apkUrl}" download="${app.appName}.apk" class="big-download-btn">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download Secure APK
+                </a>
+            `;
+        }
+
+        function navTabSwitch(category, element) {
+            filterCategory = category;
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active')); element.classList.add('active');
+            
+            const storeContainer = document.getElementById('storeViewContent'); 
+            const profileContainer = document.getElementById('profileViewContent');
+
+            if (category === 'profile') { 
+                storeContainer.style.display = 'none'; 
+                profileContainer.style.display = 'block'; 
+            } else {
+                profileContainer.style.display = 'none'; 
+                storeContainer.style.display = 'block'; 
+                applyFilters();
+            }
+        }
+
+        function applyFilters() {
+            if(filterCategory === 'profile') return;
+            let processData = masterStoreData;
+
+            if (filterCategory !== 'all') { 
+                processData = processData.filter(app => app.category && app.category.toLowerCase() === filterCategory); 
+            }
+            renderSingleApp(processData[0]);
+        }
+    </script>
+</body>
+</html>
